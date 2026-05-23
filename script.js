@@ -229,25 +229,27 @@ function submitForm(e) {
 
   // Loading state
   btn.disabled = true;
-  btnText.textContent = 'جاري تحويلك إلى واتساب...';
+  btnText.textContent = 'جاري إرسال طلبك...';
   btn.style.opacity = '0.7';
 
-  // Construct message
-  const whatsappMessage = `*طلب استشارة مجانية جديدة* 🚀\n\n` +
-                          `👤 *الاسم:* ${name}\n` +
-                          `💼 *نشاط العمل:* ${business}\n` +
-                          `📱 *رقم الواتساب للعميل:* ${phone}\n` +
-                          `📦 *الباقة المهتم بها:* ${selectedPackage}\n` +
-                          `📝 *تفاصيل إضافية:* ${message}`;
-
-  const encodedText = encodeURIComponent(whatsappMessage);
-  const whatsappUrl = `https://wa.me/201130700604?text=${encodedText}`;
-
-  // Open WhatsApp in a new tab
-  window.open(whatsappUrl, '_blank');
-
-  // Show success state on the form
-  setTimeout(() => {
+  // Send request using FormSubmit AJAX
+  fetch('https://formsubmit.co/ajax/ahmedmfarag414@gmail.com', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'Accept': 'application/json'
+    },
+    body: JSON.stringify({
+      'الاسم': name,
+      'نوع النشاط التجاري': business,
+      'رقم الواتساب للعميل': phone,
+      'الباقة المهتم بها': selectedPackage,
+      'تفاصيل إضافية': message
+    })
+  })
+  .then(response => response.json())
+  .then(data => {
+    // Show success state on the form
     btn.style.display = 'none';
     successMsg.style.display = 'block';
 
@@ -268,8 +270,15 @@ function submitForm(e) {
       btn.style.opacity = '1';
       successMsg.style.display = 'none';
     }, 5000);
-  }, 1000);
+  })
+  .catch(error => {
+    console.error('Error:', error);
+    btnText.textContent = 'حدث خطأ، حاول مرة أخرى';
+    btn.disabled = false;
+    btn.style.opacity = '1';
+  });
 }
+
 
 
 // ---- Why Cards Stagger Animation ----
