@@ -214,21 +214,43 @@ document.querySelectorAll('.package-card').forEach(card => {
 // ---- Contact Form Submit ----
 function submitForm(e) {
   e.preventDefault();
+  
+  const name = document.getElementById('name').value;
+  const businessSelect = document.getElementById('business');
+  const business = businessSelect.options[businessSelect.selectedIndex].text;
+  const phone = document.getElementById('phone').value;
+  const packageSelect = document.getElementById('package-select');
+  const selectedPackage = packageSelect.options[packageSelect.selectedIndex].text;
+  const message = document.getElementById('message').value || 'لا يوجد';
+
   const btn = document.getElementById('submitBtn');
   const btnText = document.getElementById('btnText');
   const successMsg = document.getElementById('formSuccess');
 
   // Loading state
   btn.disabled = true;
-  btnText.textContent = 'جاري الإرسال...';
+  btnText.textContent = 'جاري تحويلك إلى واتساب...';
   btn.style.opacity = '0.7';
 
-  // Simulate form submission
+  // Construct message
+  const whatsappMessage = `*طلب استشارة مجانية جديدة* 🚀\n\n` +
+                          `👤 *الاسم:* ${name}\n` +
+                          `💼 *نشاط العمل:* ${business}\n` +
+                          `📱 *رقم الواتساب للعميل:* ${phone}\n` +
+                          `📦 *الباقة المهتم بها:* ${selectedPackage}\n` +
+                          `📝 *تفاصيل إضافية:* ${message}`;
+
+  const encodedText = encodeURIComponent(whatsappMessage);
+  const whatsappUrl = `https://wa.me/201130700604?text=${encodedText}`;
+
+  // Open WhatsApp in a new tab
+  window.open(whatsappUrl, '_blank');
+
+  // Show success state on the form
   setTimeout(() => {
     btn.style.display = 'none';
     successMsg.style.display = 'block';
 
-    // Animate success message
     successMsg.style.opacity = '0';
     successMsg.style.transform = 'translateY(10px)';
     successMsg.style.transition = 'all 0.5s ease';
@@ -246,8 +268,9 @@ function submitForm(e) {
       btn.style.opacity = '1';
       successMsg.style.display = 'none';
     }, 5000);
-  }, 1800);
+  }, 1000);
 }
+
 
 // ---- Why Cards Stagger Animation ----
 const whyCards = document.querySelectorAll('.why-card');
